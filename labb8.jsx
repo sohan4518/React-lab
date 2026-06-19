@@ -116,3 +116,42 @@ export default function App() {
     </div>
   );
 }
+
+
+.app {
+  width: 400px;
+  margin: 30px auto;
+  text-align: center;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0;
+}
+
+button {
+  padding: 8px 12px;
+  margin: 5px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.done {
+  color: green;
+  text-decoration: line-through;
+}
+
+.filters {
+  margin: 10px 0;
+}
