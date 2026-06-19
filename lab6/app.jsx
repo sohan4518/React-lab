@@ -15,14 +15,16 @@ const Form = () => {
   const [isFormValid, setIsFormValid] = useState(false);
 
   const sanitizeInput = (value) => DOMPurify.sanitize(value);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
       [name]: sanitizeInput(value.trim()),
     }));
   };
-  
+
   const validateForm = useCallback(() => {
     let valid = true;
     const newErrors = {};
@@ -31,24 +33,25 @@ const Form = () => {
       newErrors.name = "Name is required";
       valid = false;
     }
+
     const emailPattern =
       /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
     if (!formData.email) {
       newErrors.email = "Email is required";
       valid = false;
-    }
-    else if (!emailPattern.test(formData.email)) {
+    } else if (!emailPattern.test(formData.email)) {
       newErrors.email = "Enter valid email";
       valid = false;
     }
 
     const passwordPattern =
       /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{6,}$/;
+
     if (!formData.password) {
       newErrors.password = "Password is required";
       valid = false;
-    }
-    else if (!passwordPattern.test(formData.password)) {
+    } else if (!passwordPattern.test(formData.password)) {
       newErrors.password =
         "Min 6 chars, 1 uppercase, 1 number, 1 special char";
       valid = false;
@@ -56,6 +59,7 @@ const Form = () => {
 
     setErrors(newErrors);
     setIsFormValid(valid);
+
     return valid;
   }, [formData]);
 
@@ -65,8 +69,10 @@ const Form = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     if (isFormValid) {
       setSubmittedData(formData);
+
       setFormData({
         name: "",
         email: "",
@@ -78,9 +84,11 @@ const Form = () => {
   return (
     <div className="form-container">
       <h2>Registration Form</h2>
+
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Name</label>
+
           <input
             type="text"
             name="name"
@@ -89,6 +97,7 @@ const Form = () => {
             className={errors.name ? "error-border" : ""}
             placeholder="Enter name"
           />
+
           {errors.name && (
             <div className="error-message">
               {errors.name}
@@ -98,6 +107,7 @@ const Form = () => {
 
         <div className="form-group">
           <label>Email</label>
+
           <input
             type="email"
             name="email"
@@ -106,6 +116,7 @@ const Form = () => {
             className={errors.email ? "error-border" : ""}
             placeholder="Enter email"
           />
+
           {errors.email && (
             <div className="error-message">
               {errors.email}
@@ -115,6 +126,7 @@ const Form = () => {
 
         <div className="form-group">
           <label>Password</label>
+
           <input
             type={showPassword ? "text" : "password"}
             name="password"
@@ -123,6 +135,7 @@ const Form = () => {
             className={errors.password ? "error-border" : ""}
             placeholder="Enter password"
           />
+
           {errors.password && (
             <div className="error-message">
               {errors.password}
@@ -154,6 +167,7 @@ const Form = () => {
       {submittedData && (
         <div className="result">
           <h3>Submitted Data</h3>
+
           <p>Name: {submittedData.name}</p>
           <p>Email: {submittedData.email}</p>
           <p>Password: {submittedData.password}</p>
@@ -162,4 +176,5 @@ const Form = () => {
     </div>
   );
 };
+
 export default Form;
