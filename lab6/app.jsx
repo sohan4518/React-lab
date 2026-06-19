@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import DOMPurify from "dompurify";
 import "./index.css";
 
@@ -12,65 +12,51 @@ const Form = () => {
   const [errors, setErrors] = useState({});
   const [submittedData, setSubmittedData] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [isFormValid, setIsFormValid] = useState(false);
-
-  const sanitizeInput = (value) => DOMPurify.sanitize(value);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: sanitizeInput(value.trim()),
-    }));
+    setFormData({
+      ...formData,
+      [e.target.name]: DOMPurify.sanitize(
+        e.target.value
+      ),
+    });
   };
 
-  const validateForm = useCallback(() => {
-    let valid = true;
-    const newErrors = {};
+  const validateForm = () => {
+    let newErrors = {};
 
     if (!formData.name) {
       newErrors.name = "Name is required";
-      valid = false;
     }
-
-    const emailPattern =
-      /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
     if (!formData.email) {
       newErrors.email = "Email is required";
-      valid = false;
-    } else if (!emailPattern.test(formData.email)) {
+    } else if (
+      !/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+        .test(formData.email)
+    ) {
       newErrors.email = "Enter valid email";
-      valid = false;
     }
-
-    const passwordPattern =
-      /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{6,}$/;
 
     if (!formData.password) {
       newErrors.password = "Password is required";
-      valid = false;
-    } else if (!passwordPattern.test(formData.password)) {
+    } else if (
+      !/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{6,}$/
+        .test(formData.password)
+    ) {
       newErrors.password =
         "Min 6 chars, 1 uppercase, 1 number, 1 special char";
-      valid = false;
     }
 
     setErrors(newErrors);
-    setIsFormValid(valid);
 
-    return valid;
-  }, [formData]);
-
-  useEffect(() => {
-    validateForm();
-  }, [formData, validateForm]);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (isFormValid) {
+    if (validateForm()) {
       setSubmittedData(formData);
 
       setFormData({
@@ -86,80 +72,66 @@ const Form = () => {
       <h2>Registration Form</h2>
 
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Name</label>
+        <label>Name</label>
 
+        <input
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          className={errors.name ? "error-border" : ""}
+          placeholder="Enter name"
+        />
+
+        <div className="error-message">
+          {errors.name}
+        </div>
+
+        <label>Email</label>
+
+        <input
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          className={errors.email ? "error-border" : ""}
+          placeholder="Enter email"
+        />
+
+        <div className="error-message">
+          {errors.email}
+        </div>
+
+        <label>Password</label>
+
+        <input
+          type={showPassword ? "text" : "password"}
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          className={errors.password ? "error-border" : ""}
+          placeholder="Enter password"
+        />
+
+        <div className="error-message">
+          {errors.password}
+        </div>
+
+        <label>
           <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className={errors.name ? "error-border" : ""}
-            placeholder="Enter name"
+            type="checkbox"
+            checked={showPassword}
+            onChange={() =>
+              setShowPassword(!showPassword)
+            }
           />
+          Show Password
+        </label>
 
-          {errors.name && (
-            <div className="error-message">
-              {errors.name}
-            </div>
-          )}
-        </div>
+        <br />
+        <br />
 
-        <div className="form-group">
-          <label>Email</label>
-
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            className={errors.email ? "error-border" : ""}
-            placeholder="Enter email"
-          />
-
-          {errors.email && (
-            <div className="error-message">
-              {errors.email}
-            </div>
-          )}
-        </div>
-
-        <div className="form-group">
-          <label>Password</label>
-
-          <input
-            type={showPassword ? "text" : "password"}
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            className={errors.password ? "error-border" : ""}
-            placeholder="Enter password"
-          />
-
-          {errors.password && (
-            <div className="error-message">
-              {errors.password}
-            </div>
-          )}
-        </div>
-
-        <div className="form-group">
-          <label>
-            <input
-              type="checkbox"
-              checked={showPassword}
-              onChange={() =>
-                setShowPassword(!showPassword)
-              }
-            />
-            Show Password
-          </label>
-        </div>
-
-        <button
-          type="submit"
-          disabled={!isFormValid}
-        >
+        <button type="submit">
           Submit
         </button>
       </form>
