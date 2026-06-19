@@ -1,36 +1,118 @@
-import React,{useState} from "react";
+import React, { useState } from "react";
 import "./index.css";
-export default function App(){
-  const [tasks,set]=useState([]);
-  const [filter,setF]=useState("all");
-  const [f,setForm]=useState({name:"",date:"",desc:""});
-  const add=(e)=>{
+
+export default function App() {
+  const [tasks, setTasks] = useState([]);
+  const [filter, setFilter] = useState("all");
+
+  const [form, setForm] = useState({
+    name: "",
+    date: "",
+    desc: "",
+  });
+
+  const addTask = (e) => {
     e.preventDefault();
-    if(f.name&&f.date) set([...tasks,{...f,done:false}]),setForm({name:"",date:"",desc:""});
+
+    if (form.name && form.date) {
+      setTasks([
+        ...tasks,
+        { ...form, done: false },
+      ]);
+
+      setForm({
+        name: "",
+        date: "",
+        desc: "",
+      });
+    }
   };
-  const toggle=(i)=>set(tasks.map((t,j)=>j===i?{...t,done: !t.done}:t));
-  return(
+
+  const toggleTask = (index) => {
+    setTasks(
+      tasks.map((task, i) =>
+        i === index
+          ? { ...task, done: !task.done }
+          : task
+      )
+    );
+  };
+
+  const filteredTasks = tasks.filter((task) => {
+    if (filter === "all") return true;
+    if (filter === "done") return task.done;
+    return !task.done;
+  });
+
+  return (
     <div className="app">
-      <h1>Remainder App</h1>
-      <form onSubmit={add}>
-        {["name","date","desc"].map(k=>(
-          <input key={k} type={k==="date"?"date":"text"} placeholder={k} value={f[k]} onChange={e=>setForm({...f,[k]:e.target.value})} />
-        ))}
+      <h1>Reminder App</h1>
+
+      <form onSubmit={addTask}>
+        <input
+          type="text"
+          placeholder="Task Name"
+          value={form.name}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              name: e.target.value,
+            })
+          }
+        />
+
+        <input
+          type="date"
+          value={form.date}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              date: e.target.value,
+            })
+          }
+        />
+
+        <input
+          type="text"
+          placeholder="Description"
+          value={form.desc}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              desc: e.target.value,
+            })
+          }
+        />
+
         <button>Add</button>
       </form>
-      <div className="filters">
-        {["all","done","notdone"].map(v=>(
-          <button key={v} onClick={()=>setF(v)}>{v}</button>
-        ))}
-        </div>
-        <ul>
-          {tasks.filter(t=>filter==="all"||(filter==="done")===t.done).map((t,i)=>(
-            <li key={i} onClick={()=>toggle(i)} className={t.done?"done":""}>
-              <b>{t.name}</b>-{t.date} {t.desc&& `|${t.desc}`}
-            </li>
-          ))}
-        </ul>
-    </div>
-  )
-}
 
+      <div className="filters">
+        <button onClick={() => setFilter("all")}>
+          All
+        </button>
+
+        <button onClick={() => setFilter("done")}>
+          Done
+        </button>
+
+        <button onClick={() => setFilter("notdone")}>
+          Not Done
+        </button>
+      </div>
+
+      <ul>
+        {filteredTasks.map((task, index) => (
+          <li
+            key={index}
+            onClick={() => toggleTask(index)}
+            className={task.done ? "done" : ""}
+          >
+            <b>{task.name}</b> - {task.date}
+            {task.desc && ` - ${task.desc}`}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
