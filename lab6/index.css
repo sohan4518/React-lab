@@ -1,0 +1,28 @@
+.form-container {
+  width: 350px;
+  margin: 30px auto;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0;
+}
+
+button {
+  padding: 8px 15px;
+  margin-top: 10px;
+}
+
+.error-border {
+  border: 2px solid red;
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+}
+
+.result {
+  margin-top: 20px;
+}
